@@ -16,6 +16,60 @@
 
 <script  src="./script.js">
   //Your code goes here
+	const video = document.querySelector('.player__video');
+const playButton = document.querySelector('.player__button');
+const volumeSlider = document.querySelector('.player__slider[name="volume"]');
+const playbackSpeedSlider = document.querySelector('.player__slider[name="playbackRate"]');
+const progress = document.querySelector('.progress');
+const progressBar = document.querySelector('.progress__filled');
+const skipButtons = document.querySelectorAll('[data-skip]');
+
+function togglePlay() {
+  if (video.paused) {
+    video.play();
+    playButton.textContent = '❚ ❚';
+  } else {
+    video.pause();
+    playButton.textContent = '►';
+  }
+}
+
+function updateProgressBar() {
+  const percentage = (video.currentTime / video.duration) * 100;
+  progressBar.style.flexBasis = `${percentage}%`;
+}
+
+function skip() {
+  const skipTime = parseFloat(this.dataset.skip);
+  video.currentTime += skipTime;
+}
+
+function handleVolumeChange() {
+  video.volume = this.value;
+}
+
+function handlePlaybackSpeedChange() {
+  video.playbackRate = this.value;
+}
+
+function scrub(e) {
+  const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
+  video.currentTime = scrubTime;
+}
+
+video.addEventListener('click', togglePlay);
+playButton.addEventListener('click', togglePlay);
+video.addEventListener('timeupdate', updateProgressBar);
+skipButtons.forEach(button => button.addEventListener('click', skip));
+volumeSlider.addEventListener('input', handleVolumeChange);
+playbackSpeedSlider.addEventListener('input', handlePlaybackSpeedChange);
+progress.addEventListener('click', scrub);
+
+let mousedown = false;
+progress.addEventListener('mousemove', (e) => mousedown && scrub(e));
+progress.addEventListener('mousedown', () => mousedown = true);
+progress.addEventListener('mouseup', () => mousedown = false);
+
 </script>
 </body>
 </html>
